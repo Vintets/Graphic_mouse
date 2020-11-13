@@ -10,6 +10,7 @@ import accessory.clear_consol as cc
 import accessory.authorship as auth_sh
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
 
 CLOSECONSOLE = True
 
@@ -21,17 +22,9 @@ def mouse_graph_report(filename):
 
     allx = [point[0] for point in points]
     ally = [point[1] for point in points]
-    create_graph(points, allx=allx, ally=ally)
-    return
 
-    plt.close()
-    # Маркер начала окружности
-    plt.plot(tx,ty,linestyle='',marker=',',markersize=10, markerfacecolor='#0000FF')
-    plt.plot(mx1,my1,linestyle='',marker='.',markersize=10, markerfacecolor='#0000FF')
-
-
-    def is_file_exists(self, file):
-        return os.path.exists(file)
+    gradient = create_gradient(len(points))
+    create_graph(points, allx=allx, ally=ally, gradient=gradient)
 
 
 def filedata_read(filename):
@@ -56,7 +49,21 @@ def filedata_read(filename):
         exit(1)
     return points
 
-def create_graph(points, allx=None, ally=None):
+def create_gradient(count=1):
+    # один фиксированный цвет
+    # gradient = [0.430983, 0.808473, 0.346476, 1]
+    # если числа 0...50, то использовать параметр не 'color' а 'c'
+    # gradient = np.random.randint(0, 50, count)
+
+    # gradient = cm.get_cmap('viridis', count).colors
+    # gradient = cm.get_cmap('plasma', count).colors
+    # gradient = cm.get_cmap('Oranges', count)(range(count))
+    # gradient = cm.get_cmap('GnBu', count)(range(count))
+    gradient = cm.get_cmap('winter', count)(range(count))
+    # gradient = np.flipud(gradient)  # реверс цвета
+    return(gradient)
+
+def create_graph(points, allx=None, ally=None, gradient=None):
     fig, (ax1, ax2) = plt.subplots(
                                 nrows=1,
                                 ncols=2,
@@ -67,7 +74,7 @@ def create_graph(points, allx=None, ally=None):
     fig.canvas.set_window_title('Сумашедшая мышь')
     fig.set_tight_layout(True)
 
-    ax1.scatter(allx, ally, marker='o', c='c', edgecolor='b')
+    ax1.scatter(allx, ally, marker='o', color=gradient, edgecolor='royalblue', s=20)
     ax1.set_title('Путь курсора')
     ax1.set_xlabel('X, px', c='g', fontsize=14)
     ax1.set_ylabel('Y, px', c='g', fontsize=14)
@@ -90,6 +97,7 @@ def create_graph(points, allx=None, ally=None):
 
     plt.tight_layout()
     plt.show()
+    plt.close()
 
 def cm_to_inch(value):
     return value/2.54
@@ -112,7 +120,8 @@ if __name__ == '__main__':
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
-    filename = 'path_2020.11.11_13-46-25.txt'
+    filename = 'path_2020.11.11_13-46-25_points42.txt'
+    filename = 'path_2020.11.13_14-56-42_points79.txt'
     if(len(sys.argv) > 1):
         filename = sys.argv[1]
 
