@@ -1,0 +1,22 @@
+# System
+Thumbs.db
+
+# Venv
+
+
+# Configs
+
+
+# Project files
+*.pyc
+path_*.txt
+
+# Project dirs
+*/__pycache__/
+/zGraphic_mouse_development/
+
+# Other files
+
+# User other data
+
+
