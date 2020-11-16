@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 import os
 import sys
 import time
@@ -15,7 +14,6 @@ import keyboard
 CLOSECONSOLE = True
 RECORD = False
 EXIT_SCRIPT = False
-
 
 # ==================================================================================================
 
@@ -73,10 +71,10 @@ def exit_action(data):
 
 def record_path(data, num_path=0):
     coords_path = []
-    time_start = time.time()
+    time_start = time.perf_counter()
     while(RECORD):
         xmouse, ymouse = pyautogui.position()
-        position = (xmouse, ymouse, (time.time() - time_start) * 1000)
+        position = (xmouse, ymouse, (time.perf_counter() - time_start) * 1000)
         coords_path.append(position)
         cp.cprint2('2\rЗапись №{num: >2} ^14_x{x: >4} ^15_y{y: >4}  ^8_time{time: <18}  '.format(
                                                         x=position[0],
@@ -84,7 +82,7 @@ def record_path(data, num_path=0):
                                                         time=position[2],
                                                         num=num_path
                                                         ))
-        time.sleep(0.001)  # сколько ни ставь, минимум 15~16 ms
+        # time.sleep(0.01)  # сколько ни ставь, минимум 15~16 ms
     else:
         cp.cprint( '2\rЗапись №{num: >2} ^14_x{x: >4} ^15_y{y: >4}  ^8_time{time: <18}  ^4_Stop  ^0_► len {length} points'.format(
                                                         x=position[0],
@@ -136,3 +134,4 @@ if __name__ == '__main__':
     else:
         # time.sleep(1)
         exit()
+
