@@ -72,6 +72,7 @@ def exit_action(data):
 def record_path(data, num_path=0):
     coords_path = []
     time_start = time.perf_counter()
+    time.sleep(0.1)
     while(RECORD):
         xmouse, ymouse = pyautogui.position()
         position = (xmouse, ymouse, (time.perf_counter() - time_start) * 1000)
