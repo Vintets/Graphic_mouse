@@ -20,7 +20,6 @@ CLOSECONSOLE = True
 
 def mouse_graph_report(filename):
     points = filedata_read(filename)
-    # print(points)
 
     allx = [point[0] for point in points]
     ally = [point[1] for point in points]
@@ -29,10 +28,11 @@ def mouse_graph_report(filename):
     speedx = calculate_speed_axis(points, axis=0)
     speedy = calculate_speed_axis(points, axis=1)
     speed = calculate_speed(points)
+    acceleration = calculate_acceleration(speed, time_)
 
     gradient = create_gradient(len(points))
     create_graphs(allx=allx, ally=ally,
-                  speedx=speedx, speedy=speedy, speed=speed,
+                  speedx=speedx, speedy=speedy, speed=speed, acc=acceleration,
                   time_=time_, gradient=gradient, filename=filename)
 
 def filedata_read(filename):
@@ -110,10 +110,23 @@ def calculate_speed(points):
         speed.append(sp)
     return speed
 
+def calculate_acceleration(speed, time_):
+    # a = (V - V0) / t
+    acceleration = []
+    for ind, t in enumerate(time_):
+        try:
+            acc = (speed[ind+1] - speed[ind]) / t
+        except IndexError:
+            acc = 0
+        acceleration.append(acc)
+    # print(speed)
+    # print(acceleration)
+    return acceleration
+
 def create_graphs(allx, ally,
-                  speedx, speedy, speed,
+                  speedx, speedy, speed, acc,
                   time_, gradient, filename):
-    fig, ((ax_path1, ax_speedx, ax_speed), (ax_path2, ax_speedy, ax6)) = plt.subplots(
+    fig, ((ax_path1, ax_speedx, ax_speed), (ax_path2, ax_speedy, ax_acc)) = plt.subplots(
                                 nrows=2,
                                 ncols=3,
                                 figsize=(cm_to_inch(35), cm_to_inch(20)),
@@ -211,7 +224,8 @@ if __name__ == '__main__':
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
-    filename = 'path_2020.11.16_14-29-20_points113.txt'
+    # filename = 'path_2020.11.16_14-29-20_points113.txt'
+    filename = 'path_2020.11.16_13-49-40_points89.txt'
 
     if(len(sys.argv) > 1):
         filename = sys.argv[1]
