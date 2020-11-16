@@ -4,6 +4,7 @@
 import os
 import sys
 import time
+from pathlib import PurePath
 import accessory.colorprint as cp
 import accessory.clear_consol as cc
 import accessory.authorship as auth_sh
@@ -30,7 +31,9 @@ def mouse_graph_report(filename):
     speed = calculate_speed(points)
 
     gradient = create_gradient(len(points))
-    create_graphs(allx=allx, ally=ally, speedx=speedx, speedy=speedy, speed=speed, time_=time_, gradient=gradient)
+    create_graphs(allx=allx, ally=ally,
+                  speedx=speedx, speedy=speedy, speed=speed,
+                  time_=time_, gradient=gradient, filename=filename)
 
 def filedata_read(filename):
     try:
@@ -107,137 +110,85 @@ def calculate_speed(points):
         speed.append(sp)
     return speed
 
-def create_graphs(
-                allx, ally,
-                speedx, speedy,
-                speed,
-                time_,
-                gradient):
-    fig, ((ax1, ax3, ax5), (ax2, ax4, ax6)) = plt.subplots(
+def create_graphs(allx, ally,
+                  speedx, speedy, speed,
+                  time_, gradient, filename):
+    fig, ((ax_path1, ax_speedx, ax_speed), (ax_path2, ax_speedy, ax6)) = plt.subplots(
                                 nrows=2,
                                 ncols=3,
                                 figsize=(cm_to_inch(35), cm_to_inch(20)),
                                 dpi=100,
                                 facecolor='#EEEEEE'
                                 )
-    fig.canvas.set_window_title('Сумашедшая мышь')
+    fig.canvas.set_window_title(f'Графики для файла:  {PurePath(filename).name}')
+    fig.suptitle(f'для файла:  {PurePath(filename).name}')
     fig.set_tight_layout(True)
 
-    create_graph_path1(ax1, gradient, allx, ally)
-    create_graph_path2(ax2, gradient, allx, ally)
-    create_graph_speedx(ax3, gradient, time_, speedx)
-    create_graph_speedy(ax4, gradient, time_, speedy)
-    create_graph_speed(ax5, gradient, time_, speed)
+    create_graph_path1(ax_path1, gradient, allx, ally)
+    create_graph_path2(ax_path2, gradient, allx, ally)
+    create_graph_speed(ax_speedx, gradient, time_, data_y=speedx, title='Скорость по X')
+    create_graph_speed(ax_speedy, gradient, time_, data_y=speedy, title='Скорость по Y')
+    create_graph_speed(ax_speed, gradient, time_, data_y=speed, title='Скорость курсора')
 
     plt.tight_layout()
     plt.show()
     plt.close()
 
-def create_graph_path1(ax1, gradient, allx, ally):
-    ax1.scatter(allx, ally, marker='o', color=gradient, edgecolor='royalblue', s=20)
-    ax1.set_title('Путь курсора')
-    ax1.set_xlabel('X, px', c='g', fontsize=14)
-    ax1.set_ylabel('Y, px', c='g', fontsize=14)
-    ax1.invert_yaxis()
-    ax1.set_aspect('equal')
+def create_graph_path1(ax_path1, gradient, allx, ally):
+    ax_path1.scatter(allx, ally, marker='o', color=gradient, edgecolor='royalblue', s=20)
+    ax_path1.set_title('Путь курсора')
+    ax_path1.set_xlabel('X, px', c='dimgray', fontsize=14)
+    ax_path1.set_ylabel('Y, px', c='dimgray', fontsize=14)
+    ax_path1.invert_yaxis()
+    ax_path1.set_aspect('equal')
 
-    ax1.grid(which='major', color = 'dimgray')
-    ax1.minorticks_on()
-    ax1.grid(which='minor', color = 'gray', linestyle = ':')
+    ax_path1.grid(which='major', color = 'dimgray')
+    ax_path1.minorticks_on()
+    ax_path1.grid(which='minor', color = 'gray', linestyle = ':')
 
     # Устанавливаем интервал основных и вспомогательных тиков
-    ax1.xaxis.set_major_locator(ticker.MultipleLocator(100))
-    ax1.xaxis.set_minor_locator(ticker.MultipleLocator(10))
-    ax1.yaxis.set_major_locator(ticker.MultipleLocator(100))
-    ax1.yaxis.set_minor_locator(ticker.MultipleLocator(10))
+    ax_path1.xaxis.set_major_locator(ticker.MultipleLocator(100))
+    ax_path1.xaxis.set_minor_locator(ticker.MultipleLocator(20))
+    ax_path1.yaxis.set_major_locator(ticker.MultipleLocator(100))
+    ax_path1.yaxis.set_minor_locator(ticker.MultipleLocator(20))
 
-def create_graph_path2(ax2, gradient, allx, ally):
+def create_graph_path2(ax_path2, gradient, allx, ally):
     # ax2.plot(allx, ally, "m--")
-    ax2.plot(allx, ally, linestyle='-', linewidth = 1, marker='o', markersize=4, color='c')
-    ax2.set_title('Путь курсора')
-    ax2.set_xlabel('координата X', c='g', fontsize=14)
-    ax2.set_ylabel('координата Y', c='g', fontsize=14)
-    ax2.invert_yaxis()
-    ax2.set_aspect('equal')
+    ax_path2.plot(allx, ally, linestyle='-', linewidth = 1, marker='o', markersize=4, color='c')
+    ax_path2.set_title('Путь курсора')
+    ax_path2.set_xlabel('координата X', c='dimgray', fontsize=14)
+    ax_path2.set_ylabel('координата Y', c='dimgray', fontsize=14)
+    ax_path2.invert_yaxis()
+    ax_path2.set_aspect('equal')
 
-    ax2.grid(which='major', color = 'dimgray')
-    ax2.minorticks_on()
-    ax2.grid(which='minor', color = 'gray', linestyle = ':')
-
-    # Устанавливаем интервал основных и вспомогательных тиков
-    ax2.xaxis.set_major_locator(ticker.MultipleLocator(100))
-    ax2.xaxis.set_minor_locator(ticker.MultipleLocator(10))
-    ax2.yaxis.set_major_locator(ticker.MultipleLocator(100))
-    ax2.yaxis.set_minor_locator(ticker.MultipleLocator(10))
-
-def create_graph_speedx(ax3, gradient, time_, speedx):
-    ax3.plot(time_, speedx, linestyle='-', color='m')
-    ax3.set_title('Скорость по X')
-    ax3.set_xlabel('время, ms', c='dimgray', fontsize=14)
-    ax3.set_ylabel('скорость px/ms', c='dimgray', fontsize=14)
-    # ax3.invert_yaxis()
-    # ax3.set_aspect('equal')
-
-    ax3.grid(which='major', color = 'dimgray')
-    ax3.minorticks_on()
-    ax3.grid(which='minor', color = 'gray', linestyle = ':')
+    ax_path2.grid(which='major', color = 'dimgray')
+    ax_path2.minorticks_on()
+    ax_path2.grid(which='minor', color = 'gray', linestyle = ':')
 
     # Устанавливаем интервал основных и вспомогательных тиков
-    # ax3.xaxis.set_major_locator(ticker.MultipleLocator(100))
-    # ax3.xaxis.set_minor_locator(ticker.MultipleLocator(10))
-    ax3.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    ax3.yaxis.set_minor_locator(ticker.MultipleLocator(0.1))
-    ax3.tick_params(axis = 'both',
-                    which = 'minor',
-                    labelsize = 6
-                    )
-    ax3.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.1f'))
+    ax_path2.xaxis.set_major_locator(ticker.MultipleLocator(100))
+    ax_path2.xaxis.set_minor_locator(ticker.MultipleLocator(20))
+    ax_path2.yaxis.set_major_locator(ticker.MultipleLocator(100))
+    ax_path2.yaxis.set_minor_locator(ticker.MultipleLocator(20))
 
-def create_graph_speedy(ax4, gradient, time_, speedy):
-    ax4.plot(time_, speedy, linestyle='-', color='m')
-    ax4.set_title('Скорость по Y')
-    ax4.set_xlabel('время, ms', c='dimgray', fontsize=14)
-    ax4.set_ylabel('скорость px/ms', c='dimgray', fontsize=14)
-    # ax4.invert_yaxis()
-    # ax4.set_aspect('equal')
+def create_graph_speed(ax_speed, gradient, time_, data_y, title=''):
+    ax_speed.plot(time_, data_y, linestyle='-', color='m')
+    ax_speed.set_title(title)
+    ax_speed.set_xlabel('время, ms', c='dimgray', fontsize=14)
+    ax_speed.set_ylabel('скорость px/ms', c='dimgray', fontsize=14)
 
-    ax4.grid(which='major', color = 'dimgray')
-    ax4.minorticks_on()
-    ax4.grid(which='minor', color = 'gray', linestyle = ':')
+    ax_speed.grid(which='major', color = 'dimgray')
+    ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(1))
+    minor_grid_speed(ax_speed, data_y)
 
-    # Устанавливаем интервал основных и вспомогательных тиков
-    # ax4.xaxis.set_major_locator(ticker.MultipleLocator(100))
-    # ax4.xaxis.set_minor_locator(ticker.MultipleLocator(10))
-    ax4.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    ax4.yaxis.set_minor_locator(ticker.MultipleLocator(0.1))
-    ax4.tick_params(axis = 'both',
-                    which = 'minor',
-                    labelsize = 6
-                    )
-    ax4.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.1f'))
-
-def create_graph_speed(ax5, gradient, time_, speed):
-    ax5.plot(time_, speed, linestyle='-', color='m')
-    ax5.set_title('Скорость курсора')
-    ax5.set_xlabel('время, ms', c='dimgray', fontsize=14)
-    ax5.set_ylabel('скорость px/ms', c='dimgray', fontsize=14)
-    # ax5.invert_yaxis()
-    # ax5.set_aspect('equal')
-
-    ax5.grid(which='major', color = 'dimgray')
-    ax5.minorticks_on()
-    ax5.grid(which='minor', color = 'gray', linestyle = ':')
-
-    # Устанавливаем интервал основных и вспомогательных тиков
-    # ax5.xaxis.set_major_locator(ticker.MultipleLocator(100))
-    # ax5.xaxis.set_minor_locator(ticker.MultipleLocator(10))
-    ax5.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    ax5.yaxis.set_minor_locator(ticker.MultipleLocator(0.1))
-    ax5.tick_params(axis = 'both',
-                    which = 'minor',
-                    labelsize = 6
-                    )
-    ax5.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.1f'))
+def minor_grid_speed(_ax, speed):
+    if(max(speed) <= 4.5):
+        _ax.tick_params(axis = 'y', which = 'major', pad = 10)
+        _ax.minorticks_on()
+        _ax.grid(which='minor', color = 'gray', linestyle = ':')
+        _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.1))
+        _ax.tick_params(axis = 'both', which = 'minor', labelsize = 5, labelcolor = 'midnightblue')
+        _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.1f'))
 
 def cm_to_inch(value):
     return value/2.54
@@ -260,9 +211,7 @@ if __name__ == '__main__':
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
-    # filename = 'path_2020.11.11_13-46-25_points42.txt'
-    # filename = 'path_2020.11.13_14-56-42_points79.txt'
-    filename = 'path_2020.11.13_19-25-45_points48.txt'
+    filename = 'path_2020.11.16_14-29-20_points113.txt'
 
     if(len(sys.argv) > 1):
         filename = sys.argv[1]
