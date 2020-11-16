@@ -84,7 +84,8 @@ def record_path(data, num_path=0):
                                                         ))
         # time.sleep(0.01)  # сколько ни ставь, минимум 15~16 ms
     else:
-        cp.cprint( '2\rЗапись №{num: >2} ^14_x{x: >4} ^15_y{y: >4}  ^8_time{time: <18}  ^4_Stop  ^0_► len {length} points'.format(
+        coords_path = filter_double_coords(coords_path)
+        cp.cprint('2\rЗапись №{num: >2} ^14_x{x: >4} ^15_y{y: >4}  ^8_time{time: <18}  ^4_Stop  ^0_► len {length} points'.format(
                                                         x=position[0],
                                                         y=position[1],
                                                         time=position[2],
@@ -95,6 +96,16 @@ def record_path(data, num_path=0):
         savefile(coords_path)
         num_path += 1
     return num_path
+
+def filter_double_coords(coords_path):
+    prev = None
+    filtered_coords = []
+    for current in coords_path:
+        coord = (current[0], current[1])
+        if coord != prev:
+            filtered_coords.append(current)
+        prev = coord
+    return filtered_coords
 
 def savefile(path):
     current_time = time.strftime('%Y.%m.%d_%H-%M-%S', time.localtime(time.time()))
