@@ -143,7 +143,6 @@ def create_graphs(allx, ally,
     ax_acc     = plt.subplot2grid(gridsize, (1, 0))
     ax_speed   = plt.subplot2grid(gridsize, (0, 1))
     ax_speedxy = plt.subplot2grid(gridsize, (1, 1))
-    
 
     # gridsize = (2, 3)
     # ax_path1  = plt.subplot2grid(gridsize, (0, 0))  #, colspan=2, rowspan=2
@@ -212,38 +211,44 @@ def create_graph_path2(ax_path2, allx, ally, gradient=None):
     ax_path2.yaxis.set_minor_locator(ticker.MultipleLocator(20))
 
 def create_graph_speed(ax_speed, time_, 
-                       data_y, data_y_ex=None,
+                       data_y, data_y_ex=None, data_y_smooth=None,
                        title='', ylabel='скорость px/ms',
                        gradient=None, c='m', linewidth=1.5):
-    ax_speed.plot(time_, data_y, linewidth=linewidth, linestyle='-', color=c, label='по оси X')
+    if data_y_smooth is not None:
+        ax_speed.plot(time_, data_y, linewidth=1, linestyle='-', color='coral', label='по оси X')
+        ax_speed.plot(time_, data_y_smooth, linewidth=linewidth, linestyle='-', color=c)
+    else:
+        ax_speed.plot(time_, data_y, linewidth=linewidth, linestyle='-', color=c, label='по оси X')
     if data_y_ex is not None:
         ax_speed.plot(time_, data_y_ex, linewidth=1, linestyle='-', color='darkgreen', label='по оси Y')
         ax_speed.legend()
+
     ax_speed.set_title(title, fontsize=14)
     ax_speed.set_xlabel('время, ms', c='dimgray', fontsize=12.5)
     ax_speed.set_ylabel(ylabel, c='dimgray', fontsize=12.5)
 
     ax_speed.grid(which='major', color = 'dimgray')
     ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    if max(data_y) < 0.01:
+    maxabs = max(map(abs, data_y))
+    if maxabs < 0.01:
         ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(0.001))
-    elif max(data_y) < 0.1:
+    elif maxabs < 0.1:
         ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(0.01))
-    minor_grid_speed(ax_speed, data_y)
+    minor_grid_speed(ax_speed, data_y, maxabs)
 
-def minor_grid_speed(_ax, data_y):
-    if max(data_y) <= 5.5:
+def minor_grid_speed(_ax, data_y, maxabs):
+    if maxabs <= 5.5:
         _ax.minorticks_on()
         _ax.grid(which='minor', color = 'gray', linestyle = ':')
-    if 0.1 < max(data_y) <= 4:
+    if 0.1 < maxabs <= 4:
         _ax.tick_params(axis = 'y', which = 'major', pad = 12)
 
-    if max(data_y) < 0.01:
+    if maxabs < 0.01:
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.0002))
-    elif max(data_y) < 0.1:
+    elif maxabs < 0.1:
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.001))
         # _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.001f'))
-    elif max(data_y) <= 4:
+    elif maxabs <= 4:
         _ax.tick_params(axis = 'both', which = 'minor', labelsize = 5, labelcolor = 'midnightblue')
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.1))
         _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.1f'))
