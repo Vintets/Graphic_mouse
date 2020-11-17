@@ -121,14 +121,14 @@ def calculate_acceleration(speed, time_):
             acceleration.append(0)
             continue
         try:
-            acc = (speed[ind] - speed[ind-1]) / t
+            acc = (speed[ind] - speed[ind-1]) / (t - time_[ind-1])
         except ZeroDivisionError:
             acc = speed[ind] - speed[ind-1]
         # except IndexError:
             # acc = 0
         acceleration.append(acc)
-    # print(speed)
-    # print(acceleration)
+    # for sp, acc, t in zip(speed, acceleration, time_):
+        # print(sp, acc, t)
     return acceleration
 
 def smooth(speed):
@@ -243,8 +243,8 @@ def create_graph_speed(ax_speed, time_,
     maxabs = max(map(abs, data_y))
     if maxabs < 0.01:
         ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(0.001))
-    elif maxabs < 0.1:
-        ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(0.01))
+    elif maxabs <= 0.3:
+        ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(0.1))
     minor_grid_speed(ax_speed, data_y, maxabs)
 
 def minor_grid_speed(_ax, data_y, maxabs):
@@ -256,14 +256,15 @@ def minor_grid_speed(_ax, data_y, maxabs):
 
     if maxabs < 0.01:
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.0002))
-    elif maxabs < 0.1:
-        _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.005))
-        # _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.001f'))
+    elif maxabs <= 0.3:
+        _ax.tick_params(axis = 'both', which = 'minor', labelsize = 6, labelcolor = 'midnightblue')
+        _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.01))
+        _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.2f'))
     elif maxabs <= 4:
-        _ax.tick_params(axis = 'both', which = 'minor', labelsize = 5, labelcolor = 'midnightblue')
+        _ax.tick_params(axis = 'both', which = 'minor', labelsize = 6, labelcolor = 'midnightblue')
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.1))
         _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.1f'))
-    else:
+    elif maxabs <= 10:
         _ax.tick_params(axis = 'both', which = 'minor', labelsize = 6, labelcolor = 'midnightblue')
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.5))
 
