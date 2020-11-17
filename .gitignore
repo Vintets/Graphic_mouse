@@ -9,13 +9,15 @@ Thumbs.db
 
 # Project files
 *.pyc
-path_*.txt
 
 # Project dirs
 */__pycache__/
 /zGraphic_mouse_development/
 
 # Other files
+path_*.txt
+path_*.png
+path_*.jpg
 
 # User other data
 
