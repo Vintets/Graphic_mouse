@@ -124,6 +124,7 @@ def calculate_acceleration(speed, time_):
     # print(acceleration)
     return acceleration
 
+
 def create_graphs(allx, ally,
                   speedx, speedy, speed, acc,
                   time_, gradient, filename, imagesave=True):
@@ -140,10 +141,14 @@ def create_graphs(allx, ally,
 
     create_graph_path1(ax_path1, allx, ally, gradient=gradient)
     create_graph_path2(ax_path2, allx, ally)
-    create_graph_speed(ax_speedx, time_, data_y=speedx, title='Скорость по X')
-    create_graph_speed(ax_speedy, time_, data_y=speedy, title='Скорость по Y')
+    # create_graph_speed(ax_speedx, time_, data_y=speedx, data_y_ex=speedy, title='Скорость по осям', c='firebrick')
+    create_graph_speed(ax_speedx, time_, data_y=speedx, title='по оси X', c='firebrick')
+    create_graph_speed(ax_speedy, time_, data_y=speedy, title='по оси Y', c='darkgreen')
     create_graph_speed(ax_speed, time_, data_y=speed, title='Скорость курсора')
-    create_graph_speed(ax_acc, time_, data_y=acc, title='Ускорение', ylabel='ускорение px/ms²')
+    create_graph_speed(ax_acc, time_, data_y=acc,
+                       title='Ускорение', ylabel='ускорение px/ms²',
+                       c='hotpink', linewidth=1)
+    # plt.yscale('log')
 
     plt.tight_layout()
     if imagesave:
@@ -191,10 +196,11 @@ def create_graph_path2(ax_path2, allx, ally, gradient=None):
 def create_graph_speed(ax_speed, time_, 
                        data_y, data_y_ex=None,
                        title='', ylabel='скорость px/ms',
-                       gradient=None, c='m'):
-    ax_speed.plot(time_, data_y, linestyle='-', color=c)
+                       gradient=None, c='m', linewidth=1.5):
+    ax_speed.plot(time_, data_y, linewidth=linewidth, linestyle='-', color=c, label='Скорость по X')
     if data_y_ex is not None:
-        ax_speed.plot(time_, data_y_ex, linestyle='-', color='r')
+        ax_speed.plot(time_, data_y_ex, linewidth=1, linestyle='-', color='darkgreen', label='Скорость по Y')
+        ax_speed.legend()
     ax_speed.set_title(title, fontsize=14)
     ax_speed.set_xlabel('время, ms', c='dimgray', fontsize=12.5)
     ax_speed.set_ylabel(ylabel, c='dimgray', fontsize=12.5)
