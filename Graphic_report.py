@@ -24,7 +24,7 @@ def mouse_graph_report(filename, imagesave=True):
 
     allx = [point[0] for point in points]
     ally = [point[1] for point in points]
-    time_ = [point[2] for point in points]
+    time_ = [point[2]-points[0][2] for point in points]
 
     speedx = calculate_speed_axis(points, axis=0)
     speedy = calculate_speed_axis(points, axis=1)
