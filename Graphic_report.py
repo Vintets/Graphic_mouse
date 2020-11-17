@@ -21,6 +21,7 @@ CLOSECONSOLE = True
 
 def mouse_graph_report(filename, imagesave=True):
     points = filedata_read(filename)
+    gradient = create_gradient(len(points))
 
     allx = [point[0] for point in points]
     ally = [point[1] for point in points]
@@ -30,10 +31,11 @@ def mouse_graph_report(filename, imagesave=True):
     speedy = calculate_speed_axis(points, axis=1)
     speed = calculate_speed(points)
     acceleration = calculate_acceleration(speed, time_)
+    speed_smooth = smooth(speed)
 
-    gradient = create_gradient(len(points))
     create_graphs(allx=allx, ally=ally,
-                  speedx=speedx, speedy=speedy, speed=speed, acc=acceleration,
+                  speedx=speedx, speedy=speedy,
+                  speed=speed, speed_smooth=speed_smooth, acc=acceleration,
                   time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
 
 def filedata_read(filename):
@@ -129,9 +131,18 @@ def calculate_acceleration(speed, time_):
     # print(acceleration)
     return acceleration
 
+def smooth(speed):
+    # z = np.polyfit(time_, speed, 2)
+    # speed_smooth = np.poly1d(z)
+
+    # НЧ фильтрация сигнала
+    w = np.hanning(7)
+    speed_smooth = np.convolve(w/w.sum(), speed, mode='same')
+    return speed_smooth
+
 
 def create_graphs(allx, ally,
-                  speedx, speedy, speed, acc,
+                  speedx, speedy, speed, speed_smooth, acc,
                   time_, gradient, filename, imagesave=True):
     fig = plt.figure(
                     figsize=(cm_to_inch(35), cm_to_inch(20)),
@@ -161,7 +172,7 @@ def create_graphs(allx, ally,
     # create_graph_path2(ax_path2, allx, ally)
     # create_graph_speed(ax_speedx, time_, data_y=speedx, title='Скорость по X', c='firebrick')
     # create_graph_speed(ax_speedy, time_, data_y=speedy, title='Скорость по Y', c='darkgreen')
-    create_graph_speed(ax_speed, time_, data_y=speed, title='Скорость курсора')
+    create_graph_speed(ax_speed, time_, data_y=speed, title='Скорость курсора', data_y_smooth=speed_smooth)
     create_graph_speed(ax_acc, time_, data_y=acc,
                        title='Ускорение', ylabel='ускорение px/ms²',
                        c='hotpink', linewidth=1)
@@ -256,7 +267,6 @@ def minor_grid_speed(_ax, data_y, maxabs):
         _ax.tick_params(axis = 'both', which = 'minor', labelsize = 6, labelcolor = 'midnightblue')
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.5))
 
-
 def cm_to_inch(value):
     return value/2.54
 
@@ -274,7 +284,7 @@ if __name__ == '__main__':
 
     __author__ = 'master by Vint'
     __title__ = '--- Graphic_report ---'
-    __version__ = '0.2.0'
+    __version__ = '0.2.1'
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
