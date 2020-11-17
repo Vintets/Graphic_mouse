@@ -257,7 +257,7 @@ def minor_grid_speed(_ax, data_y, maxabs):
     if maxabs < 0.01:
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.0002))
     elif maxabs < 0.1:
-        _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.001))
+        _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.005))
         # _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.001f'))
     elif maxabs <= 4:
         _ax.tick_params(axis = 'both', which = 'minor', labelsize = 5, labelcolor = 'midnightblue')
