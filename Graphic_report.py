@@ -188,35 +188,44 @@ def create_graph_path2(ax_path2, allx, ally, gradient=None):
     ax_path2.yaxis.set_major_locator(ticker.MultipleLocator(100))
     ax_path2.yaxis.set_minor_locator(ticker.MultipleLocator(20))
 
-def create_graph_speed(ax_speed, time_, data_y, gradient=None, title='', ylabel='скорость px/ms'):
-    ax_speed.plot(time_, data_y, linestyle='-', color='m')
+def create_graph_speed(ax_speed, time_, 
+                       data_y, data_y_ex=None,
+                       title='', ylabel='скорость px/ms',
+                       gradient=None, c='m'):
+    ax_speed.plot(time_, data_y, linestyle='-', color=c)
+    if data_y_ex is not None:
+        ax_speed.plot(time_, data_y_ex, linestyle='-', color='r')
     ax_speed.set_title(title, fontsize=14)
     ax_speed.set_xlabel('время, ms', c='dimgray', fontsize=12.5)
     ax_speed.set_ylabel(ylabel, c='dimgray', fontsize=12.5)
 
     ax_speed.grid(which='major', color = 'dimgray')
     ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    if(max(data_y) < 0.01):
+    if max(data_y) < 0.01:
         ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(0.001))
-    elif(max(data_y) < 0.1):
+    elif max(data_y) < 0.1:
         ax_speed.yaxis.set_major_locator(ticker.MultipleLocator(0.01))
     minor_grid_speed(ax_speed, data_y)
 
 def minor_grid_speed(_ax, data_y):
-    if(max(data_y) <= 4.5):
-        _ax.tick_params(axis = 'y', which = 'major', pad = 10)
+    if max(data_y) <= 5.5:
         _ax.minorticks_on()
         _ax.grid(which='minor', color = 'gray', linestyle = ':')
+    if 0.1 < max(data_y) <= 4:
+        _ax.tick_params(axis = 'y', which = 'major', pad = 12)
 
-    if(max(data_y) < 0.01):
+    if max(data_y) < 0.01:
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.0002))
-    elif(max(data_y) < 0.1):
+    elif max(data_y) < 0.1:
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.001))
         # _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.001f'))
-    else:
-        _ax.tick_params(axis = 'both', which = 'minor', labelsize = 6, labelcolor = 'midnightblue')
+    elif max(data_y) <= 4:
+        _ax.tick_params(axis = 'both', which = 'minor', labelsize = 5, labelcolor = 'midnightblue')
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.1))
         _ax.yaxis.set_minor_formatter(ticker.FormatStrFormatter('%.1f'))
+    else:
+        _ax.tick_params(axis = 'both', which = 'minor', labelsize = 6, labelcolor = 'midnightblue')
+        _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.5))
 
 
 def cm_to_inch(value):
@@ -236,7 +245,7 @@ if __name__ == '__main__':
 
     __author__ = 'master by Vint'
     __title__ = '--- Graphic_report ---'
-    __version__ = '0.1.0'
+    __version__ = '0.2.0'
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
