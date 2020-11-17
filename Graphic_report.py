@@ -19,7 +19,7 @@ CLOSECONSOLE = True
 
 # ==================================================================================================
 
-def mouse_graph_report(filename):
+def mouse_graph_report(filename, imagesave=True):
     points = filedata_read(filename)
 
     allx = [point[0] for point in points]
@@ -34,7 +34,7 @@ def mouse_graph_report(filename):
     gradient = create_gradient(len(points))
     create_graphs(allx=allx, ally=ally,
                   speedx=speedx, speedy=speedy, speed=speed, acc=acceleration,
-                  time_=time_, gradient=gradient, filename=filename)
+                  time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
 
 def filedata_read(filename):
     try:
@@ -126,7 +126,7 @@ def calculate_acceleration(speed, time_):
 
 def create_graphs(allx, ally,
                   speedx, speedy, speed, acc,
-                  time_, gradient, filename):
+                  time_, gradient, filename, imagesave=True):
     fig, ((ax_path1, ax_speedx, ax_speed), (ax_path2, ax_speedy, ax_acc)) = plt.subplots(
                                 nrows=2,
                                 ncols=3,
@@ -146,7 +146,7 @@ def create_graphs(allx, ally,
     create_graph_speed(ax_acc, time_, data_y=acc, title='Ускорение', ylabel='ускорение px/ms²')
 
     plt.tight_layout()
-    if IMAGESAVE:
+    if imagesave:
         plt.savefig(f'{PurePath(filename).stem}.png')
     plt.show()
     plt.close()
@@ -247,7 +247,7 @@ if __name__ == '__main__':
         filename = sys.argv[1]
 
     try:
-        mouse_graph_report(filename)
+        mouse_graph_report(filename, imagesave=IMAGESAVE)
     except KeyboardInterrupt:
         print('Программа прервана пользователем')
 
