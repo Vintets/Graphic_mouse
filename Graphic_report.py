@@ -14,6 +14,7 @@ import matplotlib.ticker as ticker
 from matplotlib import cm
 
 
+IMAGESAVE = True
 CLOSECONSOLE = True
 
 # ==================================================================================================
@@ -133,7 +134,7 @@ def create_graphs(allx, ally,
                                 dpi=100,
                                 facecolor='#EEEEEE'
                                 )
-    fig.canvas.set_window_title(f'Графики для файла:  {PurePath(filename).name}')
+    fig.canvas.set_window_title(f'Графики для файла  {PurePath(filename).name}')
     fig.suptitle(f'для файла:  {PurePath(filename).name}')
     fig.set_tight_layout(True)
 
@@ -145,6 +146,8 @@ def create_graphs(allx, ally,
     create_graph_speed(ax_acc, time_, data_y=acc, title='Ускорение', ylabel='ускорение px/ms²')
 
     plt.tight_layout()
+    if IMAGESAVE:
+        plt.savefig(f'{PurePath(filename).stem}.png')
     plt.show()
     plt.close()
 
