@@ -7,22 +7,27 @@ import time
 import accessory.colorprint as cp
 import accessory.clear_consol as cc
 import accessory.authorship as auth_sh
+import Graphic_report
 import pyautogui
 import keyboard
 
 
 CLOSECONSOLE = True
+DRAWGRAPH = True
+
 RECORD = False
 EXIT_SCRIPT = False
 
 # ==================================================================================================
 
-def main(count):
+def main():
     cp.cprint('1Управление:')
     cp.cprint('2_1 - ^1_Запустить запись координат')
     cp.cprint('4_2 - ^1_Остановить запись координат')
-    cp.cprint('9Ctrl+Q - ^1_Выход')
+    cp.cprint('9_0 - ^1_Отрисовывать график Да/Нет.')
+    cp.cprint('14Ctrl+Q - ^1_Выход')
     print('♦'*100, '')
+    write_status_drawgraph()
 
     add_hotkeys()
 
@@ -31,13 +36,16 @@ def main(count):
     while(True):
         if EXIT_SCRIPT:
             exit_action(data)
-        if(RECORD):
-            num_path = record_path(data, num_path=num_path)
+        if RECORD:
+            num_path, filename = record_path(data, num_path=num_path)
+            if DRAWGRAPH:
+                Graphic_report.mouse_graph_report(filename, imagesave=True)
         time.sleep(0.1)
 
 def add_hotkeys():
     keyboard.add_hotkey('1', hotkey_start)
     keyboard.add_hotkey('2', hotkey_stop)
+    keyboard.add_hotkey('0', hotkey_drawgraph)
     keyboard.add_hotkey('Ctrl+Q', hotkey_exit)
 
 def hotkey_start():
@@ -59,6 +67,13 @@ def hotkey_exit():
     RECORD = False
     # keyboard.unhook_all_hotkeys()
     cp.cprint('0\n\nЗаписываем файл...')
+
+def hotkey_drawgraph():
+    global DRAWGRAPH
+    if RECORD: return
+    DRAWGRAPH = not DRAWGRAPH
+    write_status_drawgraph()
+
 
 def exit_action(data):
     for i, path in enumerate(data):
@@ -94,9 +109,9 @@ def record_path(data, num_path=0):
                                                         length=len(coords_path)
                                                         ))
         data.append(coords_path)
-        savefile(coords_path)
+        filename = savefile(coords_path)
         num_path += 1
-    return num_path
+    return num_path, filename
 
 def filter_double_coords(coords_path):
     prev = None
@@ -108,6 +123,10 @@ def filter_double_coords(coords_path):
         prev = coord
     return filtered_coords
 
+def write_status_drawgraph():
+    status = 'Да' if DRAWGRAPH else 'Нет'
+    cp.cprint(f'3_Отрисовывать график: ^15_{status}')
+
 def savefile(path):
     current_time = time.strftime('%Y.%m.%d_%H-%M-%S', time.localtime(time.time()))
     filename = f'path_{current_time}_points{len(path)}.txt'
@@ -115,6 +134,7 @@ def savefile(path):
     with open(filename, 'w', encoding='utf-8') as fw:
         fw.write('\n'.join(text_path))
     time.sleep(1)
+    return filename
 
 
 if __name__ == '__main__':
@@ -130,20 +150,18 @@ if __name__ == '__main__':
 
     __author__ = 'master by Vint'
     __title__ = '--- Mouse_record ---'
-    __version__ = '0.0.1'
+    __version__ = '0.2.0'
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
-    count = 1
-
     try:
-        main(count)
+        main()
     except KeyboardInterrupt:
         print('Программа прервана пользователем')
 
     if not CLOSECONSOLE:
         input('\n---------------   END   ---------------')
     else:
-        # time.sleep(1)
+        time.sleep(1)
         exit()
 
