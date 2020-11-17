@@ -243,8 +243,14 @@ if __name__ == '__main__':
     # filename = 'path_2020.11.16_14-29-20_points113.txt'
     filename = 'path_2020.11.16_13-49-40_points89.txt'
 
-    if(len(sys.argv) > 1):
+    if len(sys.argv) > 1:
         filename = sys.argv[1]
+        if not os.path.isfile(filename):
+            cp.cprint('2Передан параметр не соответствующий пути существующего файла')
+            exit(1)
+    elif not filename:
+        cp.cprint('2Не задан файл с данными для построения')
+        exit(1)
 
     try:
         mouse_graph_report(filename, imagesave=IMAGESAVE)
