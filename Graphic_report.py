@@ -128,13 +128,19 @@ def calculate_acceleration(speed, time_):
 def create_graphs(allx, ally,
                   speedx, speedy, speed, acc,
                   time_, gradient, filename, imagesave=True):
-    fig, ((ax_path1, ax_speedx, ax_speed), (ax_path2, ax_speedy, ax_acc)) = plt.subplots(
-                                nrows=2,
-                                ncols=3,
-                                figsize=(cm_to_inch(35), cm_to_inch(20)),
-                                dpi=100,
-                                facecolor='#EEEEEE'
-                                )
+    gridsize = (2, 3)
+    fig = plt.figure(
+                    figsize=(cm_to_inch(35), cm_to_inch(20)),
+                    dpi=100,
+                    facecolor='#EEEEEE'
+                    )
+    ax_path1  = plt.subplot2grid(gridsize, (0, 0))  #, colspan=2, rowspan=2
+    ax_speedx = plt.subplot2grid(gridsize, (0, 1))
+    ax_speed  = plt.subplot2grid(gridsize, (0, 2))
+    ax_path2  = plt.subplot2grid(gridsize, (1, 0))
+    ax_speedy = plt.subplot2grid(gridsize, (1, 1))
+    ax_acc    = plt.subplot2grid(gridsize, (1, 2))
+
     fig.canvas.set_window_title(f'Графики для файла  {PurePath(filename).name}')
     fig.suptitle(f'для файла:  {PurePath(filename).name}')
     fig.set_tight_layout(True)
