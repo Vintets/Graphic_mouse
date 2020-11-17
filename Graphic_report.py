@@ -115,10 +115,15 @@ def calculate_acceleration(speed, time_):
     # a = (V - V0) / t
     acceleration = []
     for ind, t in enumerate(time_):
+        if ind == 0:
+            acceleration.append(0)
+            continue
         try:
-            acc = (speed[ind+1] - speed[ind]) / t
-        except IndexError:
-            acc = 0
+            acc = (speed[ind] - speed[ind-1]) / t
+        except ZeroDivisionError:
+            acc = speed[ind] - speed[ind-1]
+        # except IndexError:
+            # acc = 0
         acceleration.append(acc)
     # print(speed)
     # print(acceleration)
