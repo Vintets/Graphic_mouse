@@ -78,10 +78,11 @@ def hotkey_drawgraph():
 def exit_action(data):
     for i, path in enumerate(data):
         # savefile(path)
-        print('path № ', i)
-        for item in path:
-            print(item)
-        print()
+        # print('path № ', i)
+        # for item in path:
+            # print(item)
+        # print()
+        pass
     sys.exit()
 
 def record_path(data, num_path=0):
