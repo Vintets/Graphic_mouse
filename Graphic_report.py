@@ -38,10 +38,14 @@ def mouse_graph_report(filename, imagesave=True):
                   # speedx=speedx, speedy=speedy,
                   # speed=speed, speed_smooth=speed_smooth, acc=acceleration,
                   # time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
-    create_graph_3D(allx=allx, ally=ally,
+    create_graph_3D_only(allx=allx, ally=ally,
                   speedx=speedx, speedy=speedy,
                   speed=speed, speed_smooth=speed_smooth, acc=acceleration,
                   time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
+    # create_graph_3dplus(allx=allx, ally=ally,
+                  # speedx=speedx, speedy=speedy,
+                  # speed=speed, speed_smooth=speed_smooth, acc=acceleration,
+                  # time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
 
 def filedata_read(filename):
     try:
@@ -274,6 +278,28 @@ def minor_grid_speed(_ax, data_y, maxabs):
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.5))
 
 
+def create_graph_3D_only(allx, ally,
+                  speedx, speedy, speed, speed_smooth, acc,
+                  time_, gradient, filename, imagesave=True):
+    fig = plt.figure(
+                    figsize=(cm_to_inch(35), cm_to_inch(20)),
+                    dpi=100,
+                    facecolor='#EEEEEE'
+                    )
+
+    gridsize = (1, 1)
+    ax_3D   = plt.subplot2grid(gridsize, (0, 0), projection='3d')
+
+    fig.canvas.set_window_title(f'Графики для файла  {PurePath(filename).name}')
+    fig.suptitle(f'для файла:  {PurePath(filename).name}')
+    fig.set_tight_layout(True)
+
+    create_graph_3d(ax_3D, allx, ally, speed_smooth)
+
+    plt.tight_layout()
+    plt.show()
+    plt.close()
+
 def create_graph_3D(allx, ally,
                   speedx, speedy, speed, speed_smooth, acc,
                   time_, gradient, filename, imagesave=True):
@@ -284,13 +310,24 @@ def create_graph_3D(allx, ally,
                     )
 
     # ax_3D = plt.axes(projection='3d')
-    gridsize = (1, 1)
-    ax_3D   = plt.subplot2grid(gridsize, (0, 0), projection='3d')
+    gridsize = (2, 2)
+    ax_3D   = plt.subplot2grid(gridsize, (0, 0), projection='3d', colspan=1, rowspan=2)
+    ax_path1   = plt.subplot2grid(gridsize, (0, 1))
+    ax_speed   = plt.subplot2grid(gridsize, (1, 1))
 
     fig.canvas.set_window_title(f'Графики для файла  {PurePath(filename).name}')
     fig.suptitle(f'для файла:  {PurePath(filename).name}')
     fig.set_tight_layout(True)
 
+    create_graph_3d(ax_3D, allx, ally, speed_smooth)
+    create_graph_path1(ax_path1, allx, ally, gradient=gradient)
+    create_graph_speed(ax_speed, time_, data_y=speed, title='Скорость курсора', data_y_smooth=speed_smooth)
+
+    plt.tight_layout()
+    plt.show()
+    plt.close()
+
+def create_graph_3dplus(ax_3D, allx, ally, speed_smooth):
     ax_3D.set_title('Координаты/скорость', fontsize=14)
     ax_3D.plot3D(allx, speed_smooth, ally, linestyle='-', linewidth = 1.2, color='slategrey')  # skyblue goldenrod
     # cmap=plt.cm.autumn.reversed()  cmap=plt.cm.RdBu.reversed()  cmap=plt.cm.winter  cmap=plt.cm.cool
@@ -308,9 +345,6 @@ def create_graph_3D(allx, ally,
     ax_3D.invert_zaxis()
     # ax_3D.invert_yaxis()
 
-    plt.tight_layout()
-    plt.show()
-    plt.close()
 
 def cm_to_inch(value):
     return value/2.54
