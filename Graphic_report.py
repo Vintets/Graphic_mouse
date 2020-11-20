@@ -11,6 +11,7 @@ import accessory.authorship as auth_sh
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+# from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 
@@ -33,7 +34,11 @@ def mouse_graph_report(filename, imagesave=True):
     acceleration = calculate_acceleration(speed, time_)
     speed_smooth = smooth(speed)
 
-    create_graphs(allx=allx, ally=ally,
+    # create_graphs(allx=allx, ally=ally,
+                  # speedx=speedx, speedy=speedy,
+                  # speed=speed, speed_smooth=speed_smooth, acc=acceleration,
+                  # time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
+    create_graph_3D(allx=allx, ally=ally,
                   speedx=speedx, speedy=speedy,
                   speed=speed, speed_smooth=speed_smooth, acc=acceleration,
                   time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
@@ -268,8 +273,56 @@ def minor_grid_speed(_ax, data_y, maxabs):
         _ax.tick_params(axis = 'both', which = 'minor', labelsize = 6, labelcolor = 'midnightblue')
         _ax.yaxis.set_minor_locator(ticker.MultipleLocator(0.5))
 
+
+def create_graph_3D(allx, ally,
+                  speedx, speedy, speed, speed_smooth, acc,
+                  time_, gradient, filename, imagesave=True):
+    fig = plt.figure(
+                    figsize=(cm_to_inch(35), cm_to_inch(20)),
+                    dpi=100,
+                    facecolor='#EEEEEE'
+                    )
+
+    # ax_3D = plt.axes(projection='3d')
+    gridsize = (1, 1)
+    ax_3D   = plt.subplot2grid(gridsize, (0, 0), projection='3d')
+
+    fig.canvas.set_window_title(f'Графики для файла  {PurePath(filename).name}')
+    fig.suptitle(f'для файла:  {PurePath(filename).name}')
+    fig.set_tight_layout(True)
+
+    ax_3D.set_title('Координаты/скорость', fontsize=14)
+    ax_3D.plot3D(allx, speed_smooth, ally, linestyle='-', linewidth = 1.2, color='slategrey')  # skyblue goldenrod
+    # cmap=plt.cm.autumn.reversed()  cmap=plt.cm.RdBu.reversed()  cmap=plt.cm.winter  cmap=plt.cm.cool
+    ax_3D.scatter3D(allx, speed_smooth, ally,  #norm=None
+                    marker='o', s=20,  #edgecolor='lightgray', linewidths=1,
+                    c=speed_smooth, cmap=plt.cm.cool, alpha=1
+                    )
+    # ax_3D.plot3D(allx, speed_smooth, ally, linestyle='-', linewidth = 1, marker='o', markersize=4, color='c')
+    ax_3D.set_xlabel('X, px', c='dimgray', fontsize=12.5)
+    ax_3D.set_ylabel('скорость px/ms', c='dimgray', fontsize=12.5)
+    ax_3D.set_zlabel('Y, px', c='dimgray', fontsize=12.5)
+    # axisEqual3D(ax_3D)
+    # ax_3D.set_aspect('equal')
+    ax_3D.set_box_aspect((np.ptp(allx), max(speed_smooth)*100, np.ptp(ally)))
+    ax_3D.invert_zaxis()
+    # ax_3D.invert_yaxis()
+
+    plt.tight_layout()
+    plt.show()
+    plt.close()
+
 def cm_to_inch(value):
     return value/2.54
+
+def axisEqual3D(ax):
+    extents = np.array([getattr(ax, 'get_{}lim'.format(dim))() for dim in 'xz'])
+    sz = extents[:,1] - extents[:,0]
+    centers = np.mean(extents, axis=1)
+    maxsize = max(abs(sz))
+    r = maxsize/2
+    for ctr, dim in zip(centers, 'xz'):
+        getattr(ax, 'set_{}lim'.format(dim))(ctr - r, ctr + r)
 
 
 if __name__ == '__main__':
@@ -289,8 +342,8 @@ if __name__ == '__main__':
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
-    # filename = 'path_2020.11.16_14-29-20_points113.txt'
-    filename = 'path_2020.11.16_13-49-40_points89.txt'
+    filename = 'path_2020.11.16_14-29-20_points113.txt'
+    # filename = 'path_2020.11.16_13-49-40_points89.txt'
 
     if len(sys.argv) > 1:
         filename = sys.argv[1]
