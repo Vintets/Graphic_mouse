@@ -282,7 +282,7 @@ def create_graph_3D_only(allx, ally,
                   speedx, speedy, speed, speed_smooth, acc,
                   time_, gradient, filename, imagesave=True):
     fig = plt.figure(
-                    figsize=(cm_to_inch(35), cm_to_inch(20)),
+                    figsize=(cm_to_inch(23), cm_to_inch(20)),
                     dpi=100,
                     facecolor='#EEEEEE'
                     )
