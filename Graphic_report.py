@@ -42,7 +42,7 @@ def mouse_graph_report(filename, imagesave=True):
                   speedx=speedx, speedy=speedy,
                   speed=speed, speed_smooth=speed_smooth, acc=acceleration,
                   time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
-    # create_graph_3dplus(allx=allx, ally=ally,
+    # create_graph_3Dplus(allx=allx, ally=ally,
                   # speedx=speedx, speedy=speedy,
                   # speed=speed, speed_smooth=speed_smooth, acc=acceleration,
                   # time_=time_, gradient=gradient, filename=filename, imagesave=imagesave)
@@ -300,7 +300,7 @@ def create_graph_3D_only(allx, ally,
     plt.show()
     plt.close()
 
-def create_graph_3D(allx, ally,
+def create_graph_3Dplus(allx, ally,
                   speedx, speedy, speed, speed_smooth, acc,
                   time_, gradient, filename, imagesave=True):
     fig = plt.figure(
@@ -327,7 +327,7 @@ def create_graph_3D(allx, ally,
     plt.show()
     plt.close()
 
-def create_graph_3dplus(ax_3D, allx, ally, speed_smooth):
+def create_graph_3d(ax_3D, allx, ally, speed_smooth):
     ax_3D.set_title('Координаты/скорость', fontsize=14)
     ax_3D.plot3D(allx, speed_smooth, ally, linestyle='-', linewidth = 1.2, color='slategrey')  # skyblue goldenrod
     # cmap=plt.cm.autumn.reversed()  cmap=plt.cm.RdBu.reversed()  cmap=plt.cm.winter  cmap=plt.cm.cool
