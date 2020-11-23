@@ -155,6 +155,13 @@ if __name__ == '__main__':
     __copyright__ = 'Copyright 2020 (c)  bitbucket.org/Vintets'
     auth_sh.authorship(__author__, __title__, __version__, __copyright__, width=_width)
 
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+        if not os.path.isfile(filename):
+            cp.cprint('2Передан параметр не соответствующий пути существующего файла')
+            exit(1)
+        Graphic_report.mouse_graph_report(filename, imagesave=True)
+
     try:
         main()
     except KeyboardInterrupt:
